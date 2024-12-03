@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main>
+        <!-- Animerad Stjärnhimel -->
+        <section class="sky">
+            <article class="stars"></article>
+            <article class="comet"></article>
+            <article class="moving-stars-container"></article>
+        </section>
+    
+     <header>
+      <h1>Galaxy Explorer</h1>
+      <input type="text" id="search" placeholder="Sök...">
+     </header>
+
+        <!-- Planeterna. Varje planet får ett data-id för att kunna kopplas korrekt mot APIet -->
+        <section id="solar-system">
+            <article class="sun" aria-label="Sun"></article>
+            <article class="planet merkurius" aria-label="Merkurius" data-id="1" onclick="showPlanetCard({name: 'Merkurius'})"></article>
+            <article class="planet venus" aria-label="Venus" data-id="2" onclick="showPlanetCard({name: 'Venus'})"></article>
+            <article class="planet jorden" aria-label="Jorden" data-id="3" onclick="showPlanetCard({name: 'Jorden'})"></article>
+            <article class="planet mars" aria-label="Mars" data-id="4" onclick="showPlanetCard({name: 'Mars'})"></article>
+            <article class="planet jupiter" aria-label="Jupiter" data-id="5" onclick="showPlanetCard({name: 'Jupiter'})"></article>
+            <article class="planet saturnus" aria-label="Saturnus" data-id="6" onclick="showPlanetCard({name: 'Saturnus'})"></article>
+            <article class="planet uranus" aria-label="Uranus" data-id="7" onclick="showPlanetCard({name: 'Uranus'})"></article>
+            <article class="planet neptunus" aria-label="Neptunus" data-id="8" onclick="showPlanetCard({name: 'Neptunus'})"></article>            
+        </section>
+
+
+        <!-- Popup för planetkort med information om planeterna -->
+        <div id="planet-popup" class="hidden">
+            <div class="planet-card">
+                <h3 id="planet-name"></h3>
+                <p id="planet-description"></p>
+                <div id="extra-info"></div>
+                <button id="close-card">Stäng</button>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

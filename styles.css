@@ -1,0 +1,543 @@
+/* Grundläggande styling */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: black; /* Svart bakgrund för att matcha stjärnfältet */
+    overflow: auto; /* Standardinställning för scroll */
+}
+
+
+/* Planet lyser upp vid sökfunktion */
+.planet.highlight {
+    outline: 0px solid #ffffff; /* Ram */
+    box-shadow: 0 0 20px #ffffff; 
+    transform: scale(1.2); /* Gör planeten lite större */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Solen */
+.sun {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%; /* Rund form */
+    background: radial-gradient(
+        circle at 50% 50%, 
+        rgba(255, 204, 0, 1) 0%, /* Fullt opak ljusgult */
+        rgba(255, 140, 0, 1) 60%, /* Fullt opak orange */
+        rgba(255, 69, 0, 1) 80%, /* Fullt opak rödorange */
+        rgba(255, 0, 0, 1) 100% /* Fullt opak röd */
+    );
+    position: relative;
+    box-shadow: 0 0 50px 20px rgba(255, 140, 0, 0.8); /* Glödande effekt */
+}
+
+
+
+
+
+/* Planeter */
+.planet {
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 1; /* Fullt synlig */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smidig fade och rörelse */
+}
+
+.planet.hidden {
+    opacity: 0; /* Osynlig vid fade-out */
+}
+
+.planet:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+/* Specifika planeter */
+.planet.merkurius {
+    background: radial-gradient(
+        circle at 30% 30%, 
+        rgba(223, 223, 223, 0.7), 
+        rgba(0, 0, 0, 0.5) 70%
+    ),
+    #b2b2b2; /* Grå färg för Merkurius */
+    width: 30px;
+    height: 30px;
+}
+
+.planet.venus {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(255, 223, 88, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #ffa600; /* Orange färg för Venus */
+    width: 50px;
+    height: 50px;
+}
+
+.planet.jorden {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(40, 151, 255, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #0024f1; /* Blå färg för Jorden */
+    width: 60px;
+    height: 60px;
+}
+
+.planet.mars {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(255, 102, 102, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #ff0000; /* Röd färg för Mars */
+    width: 40px;
+    height: 40px;
+}
+
+.planet.jupiter {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(255, 102, 102, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #972b00; /* Röd/brun färg för Jupiter */
+    width: 100px;
+    height: 100px;
+}
+
+.planet.saturnus {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(255, 227, 102, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #ffd900; /* Saturnus färger och ringar */
+    width: 90px;
+    height: 90px;
+    position: relative; /* Gör att ::before och ::after positioneras relativt till Saturnus */
+}
+
+.planet.saturnus::before {
+    content: '';
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    width: 250%; /* Gör ringen större än planetens bredd */
+    height: 12px; /* Tjockleken på ringen */
+    background: rgba(255, 223, 88, 0.8); 
+    border-radius: 50%; /* Rundar ringens kanter */
+    transform: translate(-50%, -50%) rotate(25deg); /* Lutning på ringen */
+    z-index: 1; /* Placera ringen framför planeten */
+}
+
+.planet.saturnus::after {
+    content: '';
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    width: 250%; /* Matchar ::before */
+    height: 12px;
+    background: rgba(0, 0, 0, 0.3); /* Skuggeffekt */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(25deg);
+    z-index: -1; /* Placera skuggan bakom planeten */
+}
+
+
+.planet.uranus {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(150, 222, 255, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #72efff; /* Ljusblå färg för Uranus */
+    width: 70px;
+    height: 70px;
+    position: relative; /* Gör så att ::before positioneras relativt till Uranus */
+}
+
+.planet.uranus::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%; /* Mindre än Saturnus */
+    height: 6px; /* Tjockleken på ringen */
+    background: rgba(135, 206, 235, 0.8); /* Ljusblå färg för ringen */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(10deg); /* Lutning på ringen*/
+    z-index: 1; /* Placera ringen framför planeten */
+}
+
+.planet.uranus::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3); /* Skugga för ringen */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(10deg);
+    z-index: -1; /* Placera ringen bakom planeten */
+}
+
+
+.planet.neptunus {
+    background: radial-gradient(
+            circle at 30% 30%, 
+            rgba(2, 119, 253, 0.7), 
+            rgba(0, 0, 0, 0.5) 70%
+        ),
+        #000544; /* Mörkblå färg för Neptunus */
+    width: 65px;
+    height: 65px;
+}
+
+
+  
+  header {
+    text-align: center;
+    padding: 20px;
+  }
+
+  h1{
+    color: rgb(186, 233, 255);
+    font-size: 50px;
+  }
+  
+  input#search {
+    width: 15%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 20px #ffffff; 
+  }
+  
+  #planet-list {
+    display: flex;
+    justify-content: space-around; /* Sprider ut planeterna jämnt */
+    align-items: center; /* Centrera dem vertikalt */
+    gap: 50px; /* Avstånd mellan planeterna */
+    height: 80vh; /* Ger utrymme för anpassning */
+    padding: 20px;
+    position: relative; /* Behåll detta om det behövs */
+}
+
+
+
+  
+  .planet-item {
+    background: #161b22;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .planet-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+  }
+  
+  .hidden {
+    display: none;
+    visibility: hidden;
+}
+
+
+/* Planetkort och standardstil för popupen */
+#planet-popup {
+    position: fixed;
+    top: 10%; /* Justera så att toppen alltid syns först */
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 90%; /* Anpassa bredden för mindre skärmar */
+    max-width: 400px; /* Begränsa bredden */
+    max-height: 80%; /* Begränsa höjden */
+    overflow-y: auto; /* Tillåt scroll inuti popupen */
+    z-index: 1000;
+    padding: 20px;
+    text-align: center;
+}
+
+body.popup-active {
+    overflow: hidden; /* Förhindra scroll när popupen är öppen */
+}
+
+/* Visa popup */
+#planet-popup.hidden {
+    display: none;
+}
+
+#planet-popup:not(.hidden) {
+    display: block;
+}
+
+/* Blurra endast sektioner */
+.blurred {
+    filter: blur(5px);
+}
+
+  
+.planet-card {
+    display: flex;
+    flex-direction: column; /* Lägger innehållet i vertikal riktning */
+    justify-content: space-between; /* Sprider ut innehållet med utrymme mellan */
+    align-items: center; /* Centrera horisontellt */
+    background: #1a1a2e;
+    border: 2px solid #fff;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.5);
+    position: relative;
+    animation: fade-in 1s ease-out;
+    height: 100%; /* Se till att kortet fyller tillgänglig höjd */
+    gap: 2px; /* Mellanrum mellan elementen */
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.planet-card h3 {
+    font-size: 30px;
+    margin: 10px 0;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+.planet-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+
+
+/* Stäng-knappen */
+#close-card {
+    background: hsl(226, 100%, 62%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: auto; 
+    align-self: center; /* Centrera horisontellt */
+    transition: background 0.3s ease;
+}
+
+#close-card:hover {
+    background: hsl(226, 98%, 51%);
+}
+
+/* Popup är dold som standard och visas när klassen .hidden tas bort */
+#planet-popup.hidden {
+    display: none;
+}
+
+  
+/* Stilar för #solar-system för horisontell inriktning av planeter */
+#solar-system {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 50px; /* Standard gap för horisontell layout */
+    transition: flex-direction 0.3s ease, gap 0.3s ease; /* Smooth transition */
+}
+
+@media (max-width: 1024px) {
+    body {
+        overflow-y: auto; /* Tillåt vertikal scrollning */
+        height: auto; /* Anpassa sidans höjd till innehållet */
+    }
+
+    #solar-system {
+        display: flex;
+        flex-direction: column; /* Vertikal layout */
+        align-items: center; /* Centrera planeterna horisontellt */
+        gap: 20px; /* Avstånd mellan planeter */
+        padding: 20px; /* Lägg till lite padding för bättre estetik */
+    }
+}
+
+
+/*Himel med en gradient effekt*/
+.sky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #001848, #000);
+    overflow: hidden;
+    z-index: -1;
+}
+
+.stars {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/*Stjärnorna*/
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 5s infinite alternate;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.2;
+    }
+    50%{
+        opacity: 1;
+    }
+}
+
+/*Fallande komet som är lite tydligare än rörlig stjärna*/
+.comet {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 20px white, 0 0 40px white, 0 0 60px white;
+    top: -50px;
+    left: -50px;
+    animation: moveComet 10s linear infinite ;
+}
+
+/*Animering där en komet rör sig tvärsöver skärmen*/
+@keyframes moveComet {
+    0%{ 
+        transform: translate(0,0);
+    }
+    100%{
+        transform: translate(100vw, 100vh);
+    }
+}
+
+/*Fallande stjärnor som är lite mindre synlig än kometen*/
+.moving-stars-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Hindrar stjärnor från att "försvinna" utanför vyn */
+}
+
+.moving-star{
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 5px white, 0 0 10px white;
+    animation: moveStar 8s linear infinite , twinkle 5s infinite alternate;
+
+}
+
+/*Animering där stjärnor rör sig tvärsöver skärmen och att de "twinklar"*/
+@keyframes moveStar {
+    0%{ 
+        transform: translate(0,0);
+    }
+    100%{
+        transform: translate(100vw, 100vh);
+    }
+}
+
+
+/* Anpassning för mindre skärmar, solen försvinner och vertikal layout */
+
+@media (max-width: 1024px) {
+    /* Dölj solen */
+    .sun {
+        display: none; /* Solen försvinner helt */
+    }
+
+    /* Ändra planetlayout till vertikal */
+    #solar-system {
+        display: flex;
+        flex-direction: column; /* Vertikal layout */
+        align-items: center; /* Centrera planeterna horisontellt */
+        gap: 20px; /* Utrymme mellan planeterna */
+        padding: 20px; /* Lite extra utrymme från toppen */
+    }
+
+    /* Anpassa planeternas storlek */
+    .planet {
+        width: 40px; /* Mindre storlek för mindre skärmar */
+        height: 40px;
+    }
+
+    /* Justera sökfältets layout */
+    header {
+        display: flex;
+        flex-direction: column; /* Vertikal layout för sökfältet */
+        align-items: center;
+        gap: 20px; /* Utrymme mellan rubrik och sökfält */
+    }
+
+    #search {
+        width: 60%; /* Gör sökfältet bredare */
+        font-size: 16px;
+        padding: 10px;
+    }
+}
+
+/* Anpassning för mobilskärmar */
+
+@media (max-width: 768px) {
+    /* Ytterligare justeringar för små skärmar */
+    .planet {
+        width: 30px; /* Mindre planeter på mobila enheter */
+        height: 30px;
+    }
+
+    #search {
+        width: 90%; /* Gör det bredare på små skärmar */
+        max-width: 400px;
+        font-size: 16px; /* Förbättra läsbarheten */
+        padding: 10px;
+    }
+
+    #planet-popup {
+        max-width: 95%;
+        padding: 10px;
+        font-size: 14px; /* Gör texten mindre */
+    }
+
+    .planet-card {
+        gap: 10px; /* Mindre mellanrum mellan element */
+    }
+}
+
