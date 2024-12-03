@@ -1,30 +1,49 @@
 const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 const API_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/bodies';
-const API_KEY = 'solaris-2ngXkR6S02ijFrTP';
 let allPlanets = []; // Global variabel för att lagra planetdata
 
-// Hämta planetdata från API
-async function fetchPlanets() {
+// Hämta API-nyckel via POST
+async function fetchApiKey() {
+    const API_KEY_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/keys';
     try {
-        const response = await fetch(API_URL, {
-            method: 'GET',
-            headers: {
-                'x-zocom': API_KEY, // Skickar API-nyckeln i headern
-            },
+        const response = await fetch(API_KEY_URL, {
+            method: 'POST',
         });
 
-        if (!response.ok) {
-            throw new Error(`API-fel: ${response.status} ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`API-fel: ${response.status}`);
+        const data = await response.json();
+        return data.key;
 
-        const data = await response.json(); // Parsar JSON-data
-        console.log(data.bodies); // Kontrollera datan i konsolen
-        return data.bodies; // Returnerar alla himlakroppar
     } catch (error) {
-        console.error('Fel vid hämtning av API-data:', error);
+        console.error('Fel vid hämtning av API-nyckel:', error);
+        alert('Kunde inte hämta API-nyckeln.');
+        return null;
+    }
+}
+
+// Hämta planetdata via GET
+async function fetchPlanets() {
+    const API_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/bodies';
+    try {
+        const apiKey = await fetchApiKey(); // Dynamiskt hämta nyckeln
+        if (!apiKey) throw new Error('Ingen API-nyckel kunde hämtas.');
+
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: { 'x-zocom': apiKey }, // Använd dynamiskt hämtad nyckel
+        });
+
+        if (!response.ok) throw new Error(`API-fel: ${response.status}`);
+        const data = await response.json();
+        return data.bodies;
+    } catch (error) {
+        console.error('Fel vid hämtning av planetdata:', error);
+        alert('Kunde inte hämta planetdata.');
         return [];
     }
 }
+
+
 
 // Visa planeter och hantera filtrering
 function loadPlanets(filter = "") {
@@ -214,9 +233,15 @@ searchInput.addEventListener("keydown", (e) => {
 
 
 // Vid sidladdning
-document.addEventListener("DOMContentLoaded", () => {
-    fetchPlanets(); // Hämta och visa planeter
+document.addEventListener("DOMContentLoaded", async () => {
+    const apiKey = await fetchApiKey();
+    if (apiKey) {
+        console.log('Test: Nyckeln hämtades korrekt:', apiKey);
+    } else {
+        console.error('Test: API-nyckeln kunde inte hämtas.');
+    }
 });
+
 
 
 
