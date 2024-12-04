@@ -1,8 +1,10 @@
-const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // Proxy-tjänsten hanterar CORS-kraven åt mig och vidarebefordrar förfrågan till API:t
 const API_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/bodies';
-let allPlanets = []; // Global variabel för att lagra planetdata
+let allPlanets = []; // Array för att lagra alla planetdata globalt
 
-// Hämta API-nyckel via POST
+// --- Hämta API-nyckel via POST ---
+// Denna funktion används för att hämta en API-nyckel dynamiskt från en separat endpoint.
+// API-nyckeln krävs för att autentisera förfrågningar till planet-API:t.
 async function fetchApiKey() {
     const API_KEY_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/keys';
     try {
@@ -12,16 +14,17 @@ async function fetchApiKey() {
 
         if (!response.ok) throw new Error(`API-fel: ${response.status}`);
         const data = await response.json();
-        return data.key;
+        return data.key; // Returnerar API-nyckeln
 
     } catch (error) {
         console.error('Fel vid hämtning av API-nyckel:', error);
         alert('Kunde inte hämta API-nyckeln.');
-        return null;
+        return null; // Returnerar null vid fel
     }
 }
 
-// Hämta planetdata via GET
+// --- Hämta planetdata från API:t via GET ---
+// Denna funktion hämtar en lista med planeter från API:t. Den använder API-nyckeln som hämtas från fetchApiKey().
 async function fetchPlanets() {
     const API_URL = 'https://n5n3eiyjb0.execute-api.eu-north-1.amazonaws.com/bodies';
     try {
@@ -30,42 +33,45 @@ async function fetchPlanets() {
 
         const response = await fetch(API_URL, {
             method: 'GET',
-            headers: { 'x-zocom': apiKey }, // Använd dynamiskt hämtad nyckel
+            headers: { 'x-zocom': apiKey }, // Lägg till API-nyckeln i headers
         });
 
         if (!response.ok) throw new Error(`API-fel: ${response.status}`);
         const data = await response.json();
-        return data.bodies;
+        return data.bodies; // Returnerar en lista av planeter
     } catch (error) {
         console.error('Fel vid hämtning av planetdata:', error);
         alert('Kunde inte hämta planetdata.');
-        return [];
+        return []; // Returnerar en tom lista vid fel
     }
 }
 
 
 
-// Visa planeter och hantera filtrering
+// --- Visa och filtrera planeter baserat på användarens sökning ---
+// Denna funktion renderar planeter i en lista och applicerar en sökfilterfunktion.
 function loadPlanets(filter = "") {
     const planetList = document.getElementById("planet-list");
-    if (!planetList) return;
+    if (!planetList) return; // Om elementet saknas, avsluta
 
-    planetList.innerHTML = ""; // Rensa innehållet
+    planetList.innerHTML = ""; // Rensa tidigare innehåll
 
-    // Filtrera och rendera planeter
+    // Filtrera och rendera varje planet som matchar sökningen
     allPlanets
         .filter(planet => planet.name.toLowerCase().includes(filter.toLowerCase()))
         .forEach(planet => {
             const planetItem = document.createElement("div");
-            planetItem.className = "planet-item";
+            planetItem.className = "planet-item";  // CSS-klass för styling
             planetItem.innerHTML = `
                 <img src="${planet.image || 'default-image.jpg'}" alt="${planet.name}">
                 <h3>${planet.name}</h3>
             `;
+            // Lägg till click-event för att visa detaljerad information
             planetItem.addEventListener("click", () => showPlanetCard(planet)); // Klick för detaljer
-            planetList.appendChild(planetItem);
+            planetList.appendChild(planetItem); // Lägg till planet i listan
         });
 
+        // Visa meddelande om inga planeter matchar
     if (planetList.innerHTML === "") {
         planetList.innerHTML = "<p>Inga planeter matchar din sökning.</p>";
     }
@@ -87,7 +93,8 @@ document.querySelectorAll(".planet").forEach(planet => {
 });
 
 
-// Visa detaljer om en planet på ett kort, inspirerad av Pokémonkort
+// --- Visa detaljer om en vald planet i en popup ---
+// Denna funktion öppnar en popup med detaljerad information om en planet.
 function showPlanetCard(planet) {
     const planetPopup = document.getElementById("planet-popup");
     const header = document.querySelector("header");
@@ -100,7 +107,7 @@ function showPlanetCard(planet) {
 
     console.log("Planet clicked:", planet);
 
-    // Sätt planetens namn och beskrivning
+    // Uppdatera popupens innehåll med planetens namn och beskrivning
     document.getElementById("planet-name").textContent = planet.name;
     document.getElementById("planet-description").textContent = planet.desc || 'Ingen beskrivning tillgänglig.';
 
@@ -117,7 +124,7 @@ function showPlanetCard(planet) {
     const extraInfoElements = document.querySelectorAll(".planet-card p.extra-info");
     extraInfoElements.forEach(element => element.remove());
 
-    // Lägg till ny extra info från APIet
+    // Hantera extra info såsom avstånd, temperatur och månar
     const extraInfo = document.createElement('div');
     extraInfo.id = "extra-info";
     extraInfo.innerHTML = `
@@ -130,7 +137,7 @@ function showPlanetCard(planet) {
     // Lägg till extra-info innan "Stängknappen"
     planetCard.insertBefore(extraInfo, closeButton);
 
-    // Visa popup och blurra bakgrunden
+    // Visa popupen och applicera en "blur"-effekt på bakgrunden
     planetPopup.classList.remove("hidden");
     header.classList.add("blurred");
     solarSystem.classList.add("blurred");
@@ -143,24 +150,9 @@ function showPlanetCard(planet) {
 }
 
 
-// Stäng popup
-document.getElementById("close-card").addEventListener("click", () => {
-    const planetPopup = document.getElementById("planet-popup");
-    const solarSystem = document.getElementById("solar-system");
-    const header = document.querySelector("header");
 
-    if (planetPopup && solarSystem && header) {
-        planetPopup.classList.add("hidden");
-        solarSystem.classList.remove("blurred");
-        header.classList.remove("blurred");
-    }
-});
-
-
-
-
-
-// Stäng popup
+// --- Stäng popup och återställ bakgrund ---
+// Funktionen stänger popupen och återställer bakgrundens stil och scroll.
 document.getElementById("close-card").addEventListener("click", () => {
     const planetPopup = document.getElementById("planet-popup");
     const solarSystem = document.getElementById("solar-system");
@@ -181,12 +173,12 @@ document.getElementById("close-card").addEventListener("click", () => {
 });
 
 
-// Hantera sökfält
-// Lyssna på sökfältet för "input" och "keydown" (Enter)
+// --- Hantera sökfältets inmatning ---
+// Lyssna på inmatning och "Enter"-tryck i sökfältet för att filtrera eller välja en planet.
 const searchInput = document.getElementById("search");
 
 searchInput.addEventListener("input", (e) => {
-    const searchTerm = e.target.value.toLowerCase(); // Sökterm, i små bokstäver
+    const searchTerm = e.target.value.toLowerCase();  // Använd små bokstäver för jämförelse
     const planets = document.querySelectorAll(".planet"); // Hämta alla planeter
     let matchFound = false; // Spåra om en match hittas
 
@@ -233,68 +225,68 @@ searchInput.addEventListener("keydown", (e) => {
 
 
 // Vid sidladdning
-document.addEventListener("DOMContentLoaded", async () => {
-    const apiKey = await fetchApiKey();
-    if (apiKey) {
-        console.log('Test: Nyckeln hämtades korrekt:', apiKey);
-    } else {
-        console.error('Test: API-nyckeln kunde inte hämtas.');
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    fetchPlanets(); // Hämta och visa planeter
 });
 
 
 
 
-// --- Stjärnhimlen med slumpmässig placering ---
+
+// --- Generera en stjärnhimmel med slumpmässig placering ---
+// Denna del genererar en bakgrund av "stjärnor" för att ge en rymdliknande atmosfär.
 document.addEventListener("DOMContentLoaded", () => {
-    const starsContainer = document.querySelector(".stars");
-    const numStars = 1000; // Antal stjärnor
+    const starsContainer = document.querySelector(".stars");  // Element där stjärnorna ska placeras
+    const numStars = 1000; // Antal stjärnor som ska genereras
 
     for (let i = 0; i < numStars; i++) {
-        const star = document.createElement("div");
-        star.classList.add("star");
+        const star = document.createElement("div"); // Skapa ett stjärnelement
+        star.classList.add("star"); // CSS-klass för styling
+        // Slumpmässig placering och animation
         star.style.top = `${Math.random() * 100}vh`;
         star.style.left = `${Math.random() * 100}vw`;
         star.style.animationDuration = `${Math.random() * 5 + 2}s`; // Slumpmässig varaktighet
-        starsContainer.appendChild(star);
+        starsContainer.appendChild(star); // Lägg till stjärnan i containern
     }
 
-    // Generera rörliga stjärnor som är svagare än kometen
+     // --- Generera rörliga stjärnor --- 
+    // Skapar "stjärnfall" eller rörliga stjärnor som rör sig över skärmen
     const movingStarContainer = document.querySelector(".moving-stars-container");
-    const numMovingStars = 15;
+    const numMovingStars = 15; // Antal rörliga stjärnor
     
     for (let i = 0; i < numMovingStars; i++) {
-        const movingStar = document.createElement("div");
-        movingStar.classList.add("moving-star");
+        const movingStar = document.createElement("div"); // Skapa ett rörligt stjärnelement
+        movingStar.classList.add("moving-star"); // CSS-klass för styling
         movingStar.style.top = `${Math.random() * 100}vh`;
         movingStar.style.left = `${Math.random() * 100}vw`;
         movingStar.style.animationDuration = `${Math.random() * 10 + 10}s`; // Slumpmässig varaktighet
-        movingStarContainer.appendChild(movingStar);
+        movingStarContainer.appendChild(movingStar); // Lägg till rörlig stjärna i containern
     }
     
 });
 
-// För en snyggare fade in och ut effekt på planeterna vid ändring av skärmens storlek
+// --- Anpassa layouten vid olika skärmstorlekar ---
+// Funktionen anpassar planeternas layout baserat på om skärmen är horisontell eller vertikal.
 let isVertical = window.innerWidth <= 1024; // Kontrollera initial layout
 
 function updateLayout() {
-    const planets = document.querySelectorAll('.planet');
-    const solarSystem = document.getElementById('solar-system');
-    const sun = document.querySelector('.sun');
-    const isSmallScreen = window.innerWidth <= 1024;
+    const planets = document.querySelectorAll('.planet'); // Hämta alla planet-element
+    const solarSystem = document.getElementById('solar-system'); // Huvudcontainer för solsystemet
+    const sun = document.querySelector('.sun'); // Solens element
+    const isSmallScreen = window.innerWidth <= 1024; // Kontrollera om skärmen är liten (t.ex. mobil)
 
     // Om brytningen sker (från horisontell till vertikal eller vice versa)
     if (isSmallScreen !== isVertical) {
-        // Dimma ut planeterna och solen
+        // Dölj planeter och solen tillfälligt för en snygg fade-effekt
         planets.forEach(planet => planet.classList.add('hidden'));
         if (sun) sun.classList.add('hidden');
 
         setTimeout(() => {
-            // Byt layout efter fade-out
+             // Ändra layout efter fade-out
             solarSystem.style.flexDirection = isSmallScreen ? 'column' : 'row';
             solarSystem.style.gap = isSmallScreen ? '20px' : '50px'; // Justera gap
 
-            // Dimma in planeterna och solen (om de ska synas)
+            // Visa planeter och solen igen efter layoutändringen
             planets.forEach(planet => planet.classList.remove('hidden'));
             if (!isSmallScreen && sun) sun.classList.remove('hidden');
 
@@ -302,13 +294,15 @@ function updateLayout() {
             isVertical = isSmallScreen;
         }, 300); // Vänta på fade-out (0.3s)
     } else {
-        // Ingen brytning, bara justera gap
+        // Om layouten inte ändras, justera bara avståndet mellan planeter
         solarSystem.style.gap = isSmallScreen ? '20px' : '50px';
     }
 }
 
-// Lyssna på fönstrets storleksändring
+// --- Lyssna på ändring av skärmens storlek ---
+// Uppdaterar layouten dynamiskt när fönstret ändrar storlek.
 window.addEventListener('resize', updateLayout);
 
-// Initiera layout vid sidladdning
+// --- Initiera layouten vid sidladdning ---
+// Kör layoutlogiken direkt när sidan laddas.
 window.addEventListener('load', updateLayout);
